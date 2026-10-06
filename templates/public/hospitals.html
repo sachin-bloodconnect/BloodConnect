@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}Hospitals{% endblock %}
+{% block content %}
+<div class="container page-header"><span class="eyebrow">PARTICIPATING HOSPITALS</span><h1>Hospitals</h1></div>
+<div class="container content-card"><form class="inline-form"><label>City</label><input name="city" value="{{ city }}" placeholder="e.g. Pune"><button class="btn btn-primary">Search</button></form></div>
+<div class="container cards-3">{% for h in hospitals %}<div class="card"><h3>{{ h.hospital_name }}</h3><p>{{ h.city }} • {{ h.area }}</p><p>{{ h.address }}</p><p class="muted">Registration: {{ h.registration_no }}</p></div>{% else %}<div class="empty">No verified hospitals found.</div>{% endfor %}</div>
+{% endblock %}

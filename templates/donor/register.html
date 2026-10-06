@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}Donor Registration{% endblock %}
+
+{% block content %}
+
+<div class="auth-shell">
+    <div class="auth-card wide">
+
+        <span class="eyebrow">BECOME A DONOR</span>
+
+        <h1>Donor Registration</h1>
+
+        <form method="post" class="form-grid">
+
+            <div>
+                <label>Full Name *</label>
+                <input name="full_name" required>
+            </div>
+
+            <div>
+                <label>Age *</label>
+                <input
+                    type="number"
+                    name="age"
+                    min="18"
+                    max="100"
+                    required
+                >
+            </div>
+
+            <div>
+                <label>Email *</label>
+                <input type="email" name="email" required>
+            </div>
+
+            <div>
+                <label>Mobile *</label>
+                <input
+                    name="mobile"
+                    inputmode="numeric"
+                    pattern="[6-9][0-9]{9}"
+                    required
+                >
+            </div>
+
+            <div>
+                <label>Blood Group *</label>
+
+                <select name="blood_group" required>
+
+                    <option value="">Select</option>
+
+                    {% for g in blood_groups %}
+                        <option>{{ g }}</option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+            <div>
+                <label>Password *</label>
+                <input
+                    type="password"
+                    name="password"
+                    minlength="6"
+                    required
+                >
+            </div>
+
+            <div>
+                <label>Confirm Password *</label>
+                <input
+                    type="password"
+                    name="confirm_password"
+                    minlength="6"
+                    required
+                >
+            </div>
+
+            <div>
+                <label>City *</label>
+                <input name="city" required>
+            </div>
+
+            <div>
+                <label>Area *</label>
+                <input name="area" required>
+            </div>
+
+            <div>
+                <label>Last Donation Date</label>
+                <input type="date" name="last_donation_date">
+            </div>
+
+            <div>
+                <label>Availability *</label>
+
+                <select name="availability" required>
+                    <option>Available</option>
+                    <option>Maybe Available</option>
+                    <option>Not Available</option>
+                </select>
+
+            </div>
+
+            <div class="full">
+                <button class="btn btn-primary">
+                    Register as Donor
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

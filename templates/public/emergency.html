@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Emergency Blood Request{% endblock %}
+{% block content %}
+<div class="container page-header"><span class="eyebrow">URGENT HELP</span><h1>Emergency Blood Request</h1><p>Submit accurate details. This demo searches participating verified donor records only.</p></div>
+<div class="container content-card">
+<form method="post" class="form-grid">
+<div><label>Blood Group *</label><select name="blood_group" required><option value="">Select group</option>{% for g in blood_groups %}<option>{{ g }}</option>{% endfor %}</select></div>
+<div><label>Quantity (units) *</label><input type="number" name="quantity" min="1" required></div>
+<div><label>Required Date *</label><input type="date" name="required_date" required></div>
+<div><label>Priority *</label><select name="priority"><option>Critical</option><option>Urgent</option><option>Normal</option></select></div>
+<div><label>City *</label><input name="city" required></div><div><label>Area *</label><input name="area" required></div>
+<div><label>Participating Hospital (optional)</label><select name="hospital_id"><option value="">Select hospital</option>{% for h in hospitals %}<option value="{{ h.id }}">{{ h.hospital_name }} — {{ h.city }}</option>{% endfor %}</select></div>
+<div class="full"><label>Reason / Notes</label><textarea name="reason" rows="4" placeholder="Keep this concise; do not enter unnecessary sensitive medical information."></textarea></div>
+<div class="form-actions full"><button class="btn btn-danger" type="submit">Create Emergency Request</button></div>
+</form>
+<p class="notice">BloodConnect is a college-project/demo platform. In a real emergency, contact qualified medical services and the relevant hospital directly.</p>
+</div>
+{% endblock %}

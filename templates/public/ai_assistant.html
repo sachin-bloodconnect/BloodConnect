@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Health Assistant{% endblock %}
+
+{% block content %}
+
+<section class="ai-hero">
+    <div class="container">
+
+        <span class="ai-badge">
+            SMART HEALTH ASSISTANT
+        </span>
+
+        <h1>BloodConnect AI Assistant</h1>
+
+        <p>
+            Ask general questions about blood donation, blood groups,
+            donation preparation, after-donation care, and BloodConnect.
+        </p>
+
+    </div>
+</section>
+
+
+<section class="container ai-section">
+
+    <div class="ai-card">
+
+        <h2>Ask Your Question</h2>
+
+        <p class="muted">
+            Example: What should I do before donating blood?
+        </p>
+
+        <form method="POST" action="{{ url_for('ai_assistant') }}">
+
+            <label for="question">
+                Your Question
+            </label>
+
+            <textarea
+                id="question"
+                name="question"
+                rows="5"
+                placeholder="Type your question here..."
+                required
+            >{{ question or '' }}</textarea>
+
+            <button type="submit" class="btn btn-primary">
+                Ask Assistant
+            </button>
+
+        </form>
+
+    </div>
+
+
+    {% if answer %}
+
+    <div class="ai-answer-card">
+
+        <div class="answer-heading">
+
+            <div class="answer-icon">
+                +
+            </div>
+
+            <div>
+                <h2>BloodConnect Assistant</h2>
+
+                {% if topic %}
+                    <p>{{ topic }}</p>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <div class="answer-content">
+            {{ answer }}
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <div class="ai-example-card">
+
+        <h2>Try Asking</h2>
+
+        <div class="question-grid">
+
+            <div class="question-item">
+                What is blood donation?
+            </div>
+
+            <div class="question-item">
+                What should I do before donating blood?
+            </div>
+
+            <div class="question-item">
+                What should I do after donating blood?
+            </div>
+
+            <div class="question-item">
+                What are the blood groups?
+            </div>
+
+            <div class="question-item">
+                Why is O negative important?
+            </div>
+
+            <div class="question-item">
+                How does BloodConnect work?
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="medical-disclaimer">
+
+        <strong>Important Health Notice</strong>
+
+        <p>
+            This assistant provides general educational information only.
+            It does not diagnose medical conditions and does not make final
+            medical eligibility decisions. Final medical advice and blood
+            donation eligibility should be determined by qualified healthcare
+            professionals or blood-donation staff.
+        </p>
+
+    </div>
+
+</section>
+
+{% endblock %}

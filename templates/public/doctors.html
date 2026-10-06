@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Doctors{% endblock %}
+
+{% block content %}
+
+<div class="container page-header">
+
+    <span class="eyebrow">BLOODCONNECT MEDICAL NETWORK</span>
+
+    <h1>Doctors</h1>
+
+    <p>
+        View verified doctors registered with BloodConnect.
+    </p>
+
+</div>
+
+<div class="container cards-3">
+
+    {% for doctor in doctors %}
+
+    <div class="card">
+
+        <h3>Dr. {{ doctor.full_name }}</h3>
+
+        <p>
+            <strong>Age:</strong>
+            {{ doctor.age }}
+        </p>
+
+        <p>
+            <strong>Experience:</strong>
+            {{ doctor.experience_years }} years
+        </p>
+
+        <p>
+            <strong>Specialization:</strong>
+            {{ doctor.specialization }}
+        </p>
+
+        <p>
+            <strong>Hospital:</strong>
+            {{ doctor.hospital_name }}
+        </p>
+
+        <p>
+            <strong>City:</strong>
+            {{ doctor.city }}
+        </p>
+
+        {% if doctor.bio %}
+        <p>
+            <strong>About:</strong>
+            {{ doctor.bio }}
+        </p>
+        {% endif %}
+
+        <span class="badge badge-success">
+            Verified Doctor
+        </span>
+
+    </div>
+
+    {% else %}
+
+    <div class="empty">
+        No verified doctors found.
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

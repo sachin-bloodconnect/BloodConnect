@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Registered Donors{% endblock %}
+
+{% block content %}
+
+<div class="container page-header">
+
+    <span class="eyebrow">BLOODCONNECT DONORS</span>
+
+    <h1>Registered Donors</h1>
+
+    <p>
+        View verified donors registered with BloodConnect.
+    </p>
+
+</div>
+
+
+<div class="container people-grid">
+
+    {% for donor in donors %}
+
+    <div class="person-card">
+
+        <div class="person-icon">
+            +
+        </div>
+
+        <h2>{{ donor.full_name }}</h2>
+
+        <div class="person-details">
+
+            <p>
+                <strong>Age:</strong>
+                {{ donor.age if donor.age else 'Not provided' }}
+            </p>
+
+            <p>
+                <strong>Blood Group:</strong>
+                {{ donor.blood_group }}
+            </p>
+
+            <p>
+                <strong>City:</strong>
+                {{ donor.city }}
+            </p>
+
+            <p>
+                <strong>Area:</strong>
+                {{ donor.area }}
+            </p>
+
+            <p>
+                <strong>Availability:</strong>
+                {{ donor.availability }}
+            </p>
+
+            <p>
+                <strong>Last Donation:</strong>
+                {{ donor.last_donation_date if donor.last_donation_date else 'Not provided' }}
+            </p>
+
+        </div>
+
+        <span class="badge badge-success">
+            Verified Donor
+        </span>
+
+    </div>
+
+    {% else %}
+
+    <div class="empty">
+        No verified donors found.
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

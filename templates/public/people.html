@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Registered People{% endblock %}
+
+{% block content %}
+
+<div class="container page-header">
+
+    <span class="eyebrow">BLOODCONNECT COMMUNITY</span>
+
+    <h1>Registered People</h1>
+
+    <p>
+        View people registered with BloodConnect.
+    </p>
+
+</div>
+
+
+<div class="container people-grid">
+
+    {% for person in people %}
+
+    <div class="person-card">
+
+        <div class="person-icon">
+            +
+        </div>
+
+        <h2>{{ person.full_name }}</h2>
+
+        <div class="person-details">
+
+            <p>
+                <strong>Age:</strong>
+                {{ person.age if person.age else 'Not provided' }}
+            </p>
+
+            <p>
+                <strong>Blood Group:</strong>
+                {{ person.blood_group }}
+            </p>
+
+            <p>
+                <strong>City:</strong>
+                {{ person.city }}
+            </p>
+
+            <p>
+                <strong>Area:</strong>
+                {{ person.area }}
+            </p>
+
+        </div>
+
+    </div>
+
+    {% else %}
+
+    <div class="empty">
+        No registered people found.
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

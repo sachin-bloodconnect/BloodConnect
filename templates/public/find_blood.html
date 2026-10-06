@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Find Blood{% endblock %}
+{% block content %}
+<div class="container page-header"><span class="eyebrow">SEARCH</span><h1>Find Blood</h1><p>Results below are read from participating BloodConnect database records.</p></div>
+<div class="container content-card">
+<form class="form-grid" method="get">
+<div><label>Blood Group</label><select name="blood_group"><option value="">Select group</option>{% for g in blood_groups %}<option value="{{ g }}" {% if g==selected_group %}selected{% endif %}>{{ g }}</option>{% endfor %}</select></div>
+<div><label>City</label><input name="city" value="{{ city }}" placeholder="e.g. Pune"></div>
+<div><label>Area</label><input name="area" value="{{ area }}" placeholder="e.g. Hadapsar"></div>
+<div><label>Availability</label><select name="availability"><option value="">Any</option>{% for a in ['Available','Maybe Available','Not Available'] %}<option {% if a==selected_availability %}selected{% endif %}>{{ a }}</option>{% endfor %}</select></div>
+<div class="form-actions"><button class="btn btn-primary" type="submit">Search Blood</button></div>
+</form>
+</div>
+<div class="container section-grid-2">
+<div class="content-card"><h2>Matching Donors</h2>{% if donors %}<div class="donor-list">{% for d in donors %}<div class="donor-row"><div><strong>{{ d.full_name }}</strong><p>{{ d.blood_group }} • {{ d.city }}{% if d.area %} • {{ d.area }}{% endif %}</p></div><span class="badge {% if d.availability=='Available' %}badge-success{% elif d.availability=='Maybe Available' %}badge-warning{% else %}badge-danger{% endif %}">{{ d.availability }}</span></div>{% endfor %}</div>{% elif selected_group %}<div class="empty">No verified matching donor records were found for the selected filters.</div>{% else %}<div class="empty">Select a blood group to search.</div>{% endif %}</div>
+<div class="content-card"><h2>Participating Hospitals</h2>{% if hospitals %}{% for h in hospitals %}<div class="donor-row"><div><strong>{{ h.hospital_name }}</strong><p>{{ h.city }} • {{ h.address }}{% if h.pincode %} • {{ h.pincode }}{% endif %}</p></div>{% if h.quantity is not none %}<span class="badge {% if h.quantity <= 2 %}badge-danger{% elif h.quantity <= 10 %}badge-warning{% else %}badge-success{% endif %}">{{ h.quantity }} units</span>{% else %}<span class="badge badge-neutral">Stock not entered</span>{% endif %}</div>{% endfor %}{% elif selected_group %}<div class="empty">No verified participating hospital matched the city filter.</div>{% endif %}</div>
+</div>
+{% endblock %}

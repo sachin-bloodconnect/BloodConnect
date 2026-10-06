@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Blood Camp{% endblock %}
+
+{% block content %}
+
+<div class="container page-header">
+
+    <span class="eyebrow">BLOODCONNECT</span>
+
+    <h1>Add Blood Donation Camp</h1>
+
+    <p>
+        Create a new upcoming blood donation camp.
+    </p>
+
+</div>
+
+<div class="container">
+
+    <div class="content-card">
+
+        <form method="POST">
+
+            <div class="form-grid">
+
+                <div>
+                    <label>Camp Name *</label>
+
+                    <input
+                        type="text"
+                        name="name"
+                        maxlength="180"
+                        placeholder="e.g. Blood Donation Camp - Pune"
+                        required
+                    >
+                </div>
+
+                <div>
+                    <label>Camp Date *</label>
+
+                    <input
+                        type="date"
+                        name="camp_date"
+                        required
+                    >
+                </div>
+
+                <div>
+                    <label>Camp Time *</label>
+
+                    <input
+                        type="time"
+                        name="camp_time"
+                        required
+                    >
+                </div>
+
+                <div>
+                    <label>Location *</label>
+
+                    <input
+                        type="text"
+                        name="location"
+                        maxlength="255"
+                        placeholder="e.g. Hadapsar Community Hall"
+                        required
+                    >
+                </div>
+
+                <div>
+                    <label>Organizer *</label>
+
+                    <input
+                        type="text"
+                        name="organizer"
+                        maxlength="150"
+                        placeholder="Organizer name"
+                        required
+                    >
+                </div>
+
+                <div>
+                    <label>Contact Information</label>
+
+                    <input
+                        type="text"
+                        name="contact_information"
+                        maxlength="180"
+                        placeholder="Phone or email"
+                    >
+                </div>
+
+            </div>
+
+            <div>
+                <label>Description</label>
+
+                <textarea
+                    name="description"
+                    rows="5"
+                    placeholder="Enter information about the camp..."
+                ></textarea>
+            </div>
+
+            <div>
+                <label>
+                    <input
+                        type="checkbox"
+                        name="registration_open"
+                        value="1"
+                        checked
+                    >
+                    Registration is open
+                </label>
+            </div>
+
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Add Camp
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,3 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}<div class="auth-shell"><div class="auth-card"><span class="eyebrow">WELCOME BACK</span><h1>Login to BloodConnect</h1><form method="post"><label>Email or Mobile Number</label><input name="identity" required><label>Password</label><input type="password" name="password" required><button class="btn btn-primary btn-block">Login</button></form><div class="auth-links"><a href="{{ url_for('forgot_password') }}">Forgot password?</a><a href="{{ url_for('register') }}">Create user account</a><a href="{{ url_for('donor_register') }}">Register as donor</a><a href="{{ url_for('hospital_register') }}">Register as hospital</a></div></div></div>{% endblock %}

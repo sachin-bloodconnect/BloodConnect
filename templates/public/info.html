@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="container page-header"><span class="eyebrow">BLOODCONNECT</span><h1>{{ title }}</h1></div>
+<div class="container content-card">
+{% if page == 'about' %}
+<h2>About BloodConnect</h2><p>BloodConnect is a third-year BCA college-project demonstration for connecting blood donors, users, hospitals and blood camps through a Flask and MySQL application.</p><p>The records shown by the application are database records entered into BloodConnect by participating users and hospitals.</p>
+{% elif page == 'how_it_works' %}
+<h2>How BloodConnect Works</h2><div class="steps-list"><div><b>1.</b><p>A user searches blood or creates a request.</p></div><div><b>2.</b><p>Flask validates the form and stores the request in MySQL.</p></div><div><b>3.</b><p>The matching service checks compatible, verified and available donor records.</p></div><div><b>4.</b><p>Database notifications can be shown to matching donors.</p></div><div><b>5.</b><p>A donor can respond and an authorized hospital can confirm or complete the request.</p></div></div>
+{% elif page == 'donation_guide' %}
+<h2>Blood Donation Guide</h2><h3>Before donation</h3><p>Follow the blood donation centre's instructions, eat normally and stay hydrated unless the centre tells you otherwise.</p><h3>During donation</h3><p>Qualified blood donation staff collect the donation and monitor you during the process.</p><h3>After donation</h3><p>Follow the centre's recovery instructions and report any concerning symptoms to the staff.</p><p class="notice">This project provides general information only and is not a medical decision tool.</p>
+{% elif page == 'eligibility' %}
+<h2>Eligibility Information</h2><p>Eligibility depends on factors such as age, health, medications, recent procedures and local blood-donation rules.</p><p>BloodConnect does not make final eligibility decisions. Final eligibility should be determined by qualified medical professionals or blood donation staff at the donation site.</p>
+{% elif page == 'assistant' %}
+<h2>Blood Donation Assistant</h2><div class="faq-grid"><div><h3>What is a blood group?</h3><p>A blood group identifies characteristics of blood used for transfusion compatibility. BloodConnect supports A+, A-, B+, B-, AB+, AB-, O+ and O- in this demo.</p></div><div><h3>How do I find blood?</h3><p>Use Find Blood and filter by blood group, city, area and donor availability.</p></div><div><h3>How do I request blood?</h3><p>After login, create a normal or emergency request. The request is saved in MySQL and can be tracked.</p></div><div><h3>Who decides donor eligibility?</h3><p>Qualified medical professionals and blood donation staff determine final eligibility.</p></div></div>
+{% elif page == 'faq' %}
+<h2>Frequently Asked Questions</h2><div class="faq-grid"><div><h3>Does this show every blood bank?</h3><p>No. It only shows participating hospitals and records entered into this project database.</p></div><div><h3>Does BloodConnect reveal donor addresses?</h3><p>No. Public matching uses city and area-level information.</p></div><div><h3>Are emergency messages browser notifications?</h3><p>No. The project uses database notifications shown after login.</p></div><div><h3>Can I use this for real medical decisions?</h3><p>No. It is a college-project demonstration, not a medical service.</p></div></div>
+{% elif page == 'contact' %}
+<h2>Contact Us</h2><p>For a college-project demonstration, use the contact details configured by your institution or project team. This template does not send email automatically.</p><div class="contact-box"><strong>BloodConnect Project Team</strong><p>Update this section with your college, department and official project contact details.</p></div>
+{% elif page == 'privacy' %}
+<h2>Privacy Policy</h2><p>Use the application only with data you are authorized to store. Avoid entering sensitive medical information that the project does not require. Donor exact home addresses are not shown publicly.</p><p>Administrators should limit account and database access to authorized project users.</p>
+{% elif page == 'terms' %}
+<h2>Terms & Conditions</h2><p>BloodConnect is a college-project/demo system. Blood stock and donor information are based on records entered into the application and should be independently confirmed before any real-world action.</p><p>Users must provide information honestly and use the system responsibly.</p>
+{% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Blood Requests{% endblock %}
+
+{% block content %}
+
+<div class="container page-header">
+
+    <span class="eyebrow">BLOODCONNECT</span>
+
+    <h1>Blood Requests</h1>
+
+    <p>
+        View blood requests submitted through the BloodConnect system.
+    </p>
+
+</div>
+
+<div class="container cards-3">
+
+    {% for req in requests %}
+
+    <div class="card">
+
+        <h3>
+            Request #{{ req.id }}
+        </h3>
+
+        <p>
+            <strong>Blood Group:</strong>
+            {{ req.blood_group }}
+        </p>
+
+        <p>
+            <strong>Quantity:</strong>
+            {{ req.quantity }} units
+        </p>
+
+        <p>
+            <strong>Required Date:</strong>
+            {{ req.required_date }}
+        </p>
+
+        <p>
+            <strong>City:</strong>
+            {{ req.city }}
+        </p>
+
+        <p>
+            <strong>Area:</strong>
+            {{ req.area }}
+        </p>
+
+        <p>
+            <strong>Priority:</strong>
+            {{ req.priority }}
+        </p>
+
+        <p>
+            <strong>Status:</strong>
+            {{ req.status }}
+        </p>
+
+        {% if req.notes %}
+        <p>
+            <strong>Notes:</strong>
+            {{ req.notes }}
+        </p>
+        {% endif %}
+
+    </div>
+
+    {% else %}
+
+    <div class="empty">
+        No blood requests found.
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

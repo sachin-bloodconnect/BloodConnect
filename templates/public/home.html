@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% block title %}Find Blood When It Matters Most{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="eyebrow">SMART BLOOD DONATION & EMERGENCY FINDER</span>
+      <h1>Find Blood When It Matters Most</h1>
+      <p class="hero-text">Connect with participating donors, hospitals and blood camps using a simple Flask + MySQL platform.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="{{ url_for('find_blood') }}">Find Blood</a>
+        {% if current_user %}
+          <a class="btn btn-danger" href="{{ url_for('emergency') }}">Emergency Blood Request</a>
+        {% else %}
+          <a class="btn btn-danger" href="{{ url_for('login') }}">Emergency Blood Request</a>
+        {% endif %}
+        <a class="btn btn-light" href="{{ url_for('donor_register') }}">Become a Donor</a>
+        <a class="btn btn-outline-light" href="{{ url_for('register') }}">Register</a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="blood-drop">♥</div>
+      <h3>Emergency help</h3>
+      <p>Submit a request and the backend searches verified participating donors by blood group, city and area.</p>
+      <div class="mini-flow"><span>Request</span><b>→</b><span>Match</span><b>→</b><span>Respond</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="stats-grid">
+{% for key, label in [
+    ('users', 'Registered People'),
+    ('donors', 'Registered Donors'),
+    ('hospitals', 'Hospitals'),
+    ('doctors', 'Doctors'),
+    ('requests', 'Blood Requests'),
+    ('completed', 'Completed Requests'),
+    ('camps', 'Upcoming Camps'),
+    ('requirements', 'Active Requirements')
+] %}
+
+    {% if key == 'users' %}
+
+        <a href="{{ url_for('people') }}" class="stat-card stat-link">
+            <strong>{{ stats[key] }}</strong>
+            <span>{{ label }}</span>
+            <small>View People →</small>
+        </a>
+
+    {% elif key == 'donors' %}
+
+        <a href="{{ url_for('donors') }}" class="stat-card stat-link">
+            <strong>{{ stats[key] }}</strong>
+            <span>{{ label }}</span>
+            <small>View Donors →</small>
+        </a>
+
+    {% elif key == 'hospitals' %}
+
+        <a href="{{ url_for('hospitals') }}" class="stat-card stat-link">
+            <strong>{{ stats[key] }}</strong>
+            <span>{{ label }}</span>
+            <small>View Hospitals →</small>
+        </a>
+
+    {% elif key == 'doctors' %}
+
+        <a href="{{ url_for('doctors') }}" class="stat-card stat-link">
+            <strong>{{ stats[key] }}</strong>
+            <span>{{ label }}</span>
+            <small>View Doctors →</small>
+        </a>
+
+    {% elif key == 'requests' %}
+
+        <a href="{{ url_for('blood_requests') }}" class="stat-card stat-link">
+            <strong>{{ stats[key] }}</strong>
+            <span>{{ label }}</span>
+            <small>View Blood Requests →</small>
+        </a>
+
+    {% elif key == 'completed' %}
+
+        <div class="stat-card">
+            <strong>{{ stats[key] }}</strong>
+            <span>{{ label }}</span>
+        </div>
+
+    {% elif key == 'camps' %}
+
+        <div class="stat-card">
+            <strong>{{ stats[key] }}</strong>
+            <span>{{ label }}</span>
+        </div>
+
+    {% elif key == 'requirements' %}
+
+        <div class="stat-card">
+            <strong>{{ stats[key] }}</strong>
+            <span>{{ label }}</span>
+        </div>
+
+    {% endif %}
+
+{% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section-muted">
+  <div class="container">
+    <div class="section-heading"><span class="eyebrow">HOW IT WORKS</span><h2>Simple steps. Real database actions.</h2></div>
+    <div class="cards-3">
+      <div class="card"><div class="number">01</div><h3>Search</h3><p>Search participating donors and hospital stock using blood group, city and area.</p></div>
+      <div class="card"><div class="number">02</div><h3>Request</h3><p>Create a normal or emergency request using a Flask form saved in MySQL.</p></div>
+      <div class="card"><div class="number">03</div><h3>Respond</h3><p>Verified donors receive database notifications and can accept or decline requests.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container two-col">
+    <div>
+      <span class="eyebrow">WHY DONATE BLOOD</span>
+      <h2>One donation can support a lifesaving process.</h2>
+      <p>BloodConnect is a college-project demonstration of how donors, hospitals and requesters can work through one system.</p>
+      <a class="text-link" href="{{ url_for('donation_guide') }}">Read the donation guide →</a>
+    </div>
+    <div class="blood-mini-grid">
+      {% for g in blood_groups %}<a href="{{ url_for('find_blood', blood_group=g) }}" class="group-card">{{ g }}<small>Find blood</small></a>{% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section-muted">
+  <div class="container two-col">
+    <div>
+      <div class="section-heading"><span class="eyebrow">RECENT SUCCESS</span><h2>Recently completed requests</h2></div>
+      {% if recent %}
+        <div class="table-wrap"><table><thead><tr><th>Requester</th><th>Group</th><th>Qty</th><th>Status</th></tr></thead><tbody>
+        {% for r in recent %}<tr><td>{{ r.full_name }}</td><td>{{ r.blood_group }}</td><td>{{ r.quantity }}</td><td><span class="badge badge-success">{{ r.status }}</span></td></tr>{% endfor %}
+        </tbody></table></div>
+      {% else %}<div class="empty">No completed requests have been recorded yet.</div>{% endif %}
+    </div>
+    <div>
+      <div class="section-heading"><span class="eyebrow">UPCOMING</span><h2>Blood donation camps</h2></div>
+      {% for camp in camps %}
+        <div class="list-card"><div><strong>{{ camp.name }}</strong><p>{{ camp.location }}</p></div><span class="date-pill">{{ camp.camp_date.strftime('%d %b') }}</span></div>
+      {% else %}<div class="empty">No upcoming camps are listed.</div>{% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="emergency-cta">
+  <div class="container cta-inner"><div><span class="eyebrow">EMERGENCY BLOOD</span><h2>Need blood urgently?</h2><p>Log in and create an emergency request so the matching workflow can search verified donor records.</p></div><a class="btn btn-warning" href="{{ url_for('login') }}">Start Emergency Request</a></div>
+</section>
+{% endblock %}

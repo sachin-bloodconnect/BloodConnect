@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}BloodConnect{% endblock %} | BloodConnect</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<header class="site-header">
+    <div class="container nav-wrap">
+        <a class="brand" href="{{ url_for('home') }}"><span class="brand-mark">+</span> BloodConnect</a>
+        <nav class="nav-links">
+            <a href="{{ url_for('find_blood') }}">Find Blood</a>
+            <a href="{{ url_for('camps') }}">Camps</a>
+            <a href="{{ url_for('hospitals') }}">Hospitals</a>
+            <a href="{{ url_for('blood_groups') }}">Blood Groups</a>
+            <a href="{{ url_for('ai_assistant') }}">AI Assistant</a>
+            {% if current_user %}
+                {% if current_user.role == 'USER' %}<a href="{{ url_for('user_dashboard') }}">Dashboard</a>{% endif %}
+                {% if current_user.role == 'DONOR' %}<a href="{{ url_for('donor_dashboard') }}">Dashboard</a>{% endif %}
+                {% if current_user.role == 'HOSPITAL' %}<a href="{{ url_for('hospital_dashboard') }}">Dashboard</a>{% endif %}
+                {% if current_user.role == 'ADMIN' %}<a href="{{ url_for('admin_dashboard') }}">Admin</a>{% endif %}
+                <a href="{{ url_for(current_user.role|lower + '_notifications') if current_user.role != 'ADMIN' else url_for('admin_dashboard') }}">Notifications{% if unread_notifications %} ({{ unread_notifications }}){% endif %}</a>
+                <a class="nav-logout" href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                <a class="nav-join" href="{{ url_for('register') }}">Register</a>
+            {% endif %}
+        </nav>
+    </div>
+</header>
+
+<main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <div class="container alerts">
+        {% for category, message in messages %}
+          <div class="alert {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+    <div class="container footer-grid">
+        <div>
+            <div class="brand footer-brand"><span class="brand-mark">+</span> BloodConnect</div>
+            <p>Smart blood donation and emergency blood finding demo for a college project.</p>
+        </div>
+        <div>
+            <h4>Explore</h4>
+            <a href="{{ url_for('about') }}">About</a>
+            <a href="{{ url_for('how_it_works') }}">How It Works</a>
+            <a href="{{ url_for('assistant') }}">Donation Assistant</a>
+        </div>
+        <div>
+            <h4>Help</h4>
+            <a href="{{ url_for('faq') }}">FAQ</a>
+            <a href="{{ url_for('contact') }}">Contact</a>
+            <a href="{{ url_for('privacy') }}">Privacy</a>
+            <a href="{{ url_for('terms') }}">Terms</a>
+        </div>
+    </div>
+    <div class="container footer-bottom">Blood availability shown here represents data entered by participating hospitals in BloodConnect and is not a complete real-time inventory of all blood banks.</div>
+</footer>
+</body>
+</html>
