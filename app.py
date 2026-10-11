@@ -848,6 +848,115 @@ def request_details(request_id):
                         JOIN users u ON u.id=d.user_id WHERE rr.request_id=%s ORDER BY rr.responded_at DESC''', (request_id,))
     return render_template('user/request_details.html', req=req, matches=matches, responses=responses,
                            request_code=request_code(request_id))
+@app.route(
+    '/request/<int:request_id>/notify-donor/<int:donor_id>',
+    methods=['POST']
+)
+@role_required('USER', 'DONOR', 'HOSPITAL', 'ADMIN')
+def notify_request_donor(request_id, donor_id):
+    user = current_user()
+
+    req = query(
+        '''SELECT br.*, u.full_name AS requester_name
+           FROM blood_requests br
+           JOIN users u ON u.id = br.user_id
+           WHERE br.id = %s''',
+        (request_id,),
+        one=True
+    )
+
+    if not req:
+        abort(404)
+
+    # Only the requester, an administrator, or the associated hospital
+    # can send a notification for this request.
+    allowed = req['user_id'] == user['id'] or user['role'] == 'ADMIN'
+
+    if user['role'] == 'HOSPITAL':
+        hospital = query(
+            'SELECT id FROM hospitals WHERE user_id = %s',
+            (user['id'],),
+            one=True
+        )
+        allowed = allowed or bool(
+            hospital and req['hospital_id'] == hospital['id']
+        )
+
+    if not allowed:
+        flash('You are not authorized to send this request.', 'danger')
+        return redirect(url_for('request_details', request_id=request_id))
+
+    if req['status'] in ('Completed', 'Cancelled'):
+        flash('This blood request is already closed.', 'warning')
+        return redirect(url_for('request_details', request_id=request_id))
+
+    donor = query(
+        '''SELECT d.id AS donor_id, d.user_id, d.availability,
+                  d.verified, u.full_name, u.blood_group
+           FROM donors d
+           JOIN users u ON u.id = d.user_id
+           WHERE d.id = %s''',
+        (donor_id,),
+        one=True
+    )
+
+    if (
+        not donor
+        or not donor['verified']
+        or donor['availability'] == 'Not Available'
+    ):
+        flash('This donor is not currently available for requests.', 'warning')
+        return redirect(url_for('request_details', request_id=request_id))
+
+    compatible_groups = COMPATIBLE_DONORS.get(
+        req['blood_group'], [req['blood_group']]
+    )
+
+    if donor['blood_group'] not in compatible_groups:
+        flash('This donor does not match the requested blood group.', 'danger')
+        return redirect(url_for('request_details', request_id=request_id))
+
+    if donor['user_id'] == req['user_id']:
+        flash('You cannot send a request to yourself.', 'warning')
+        return redirect(url_for('request_details', request_id=request_id))
+
+    requester = query(
+        '''SELECT full_name, email, mobile
+           FROM users
+           WHERE id = %s''',
+        (req['user_id'],),
+        one=True
+    )
+
+    if not requester:
+        flash('Requester details could not be found.', 'danger')
+        return redirect(url_for('request_details', request_id=request_id))
+
+    message = (
+        f"You received a blood request from {requester['full_name']}. "
+        f"Request ID: {request_code(request_id)}. "
+        f"Blood group: {req['blood_group']}; "
+        f"quantity: {req['quantity']} units. "
+        f"Location: {req['city']}, {req['area']}. "
+        f"Required date: {req['required_date']}. "
+        f"Priority: {req['priority']}. "
+        f"Phone: {requester.get('mobile') or 'Not provided'}. "
+        f"Email: {requester.get('email') or 'Not provided'}. "
+        f"Reason: {req.get('notes') or 'Not specified'}."
+    )
+
+    add_notification(
+        donor['user_id'],
+        'You Received a Blood Request',
+        message
+    )
+
+    flash(
+        f'Blood request notification sent to {donor["full_name"]}.',
+        'success'
+    )
+
+    return redirect(url_for('request_details', request_id=request_id))
 
 
 @app.route('/user/notifications')
@@ -895,7 +1004,7 @@ def donor_register():
                 '''INSERT INTO users
                    (full_name, email, mobile, password_hash,
                     city, area, blood_group, age, role)
-                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'DONOR')''',
+                                      VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'DONOR')''',
                 (
                     f['full_name'].strip(),
                     f['email'].strip().lower(),
