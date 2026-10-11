@@ -159,21 +159,32 @@ def stock_status(quantity):
 
 def donor_matches(blood_group, city, area, availability=None):
     donors = COMPATIBLE_DONORS.get(blood_group, [blood_group])
+
     sql = '''
         SELECT d.id AS donor_id, u.id AS user_id, u.full_name, u.blood_group,
-               u.city, u.area, u.mobile, d.availability, d.last_donation_date, d.verified
-        FROM donors d JOIN users u ON u.id=d.user_id
-        WHERE u.blood_group IN (%s) AND d.availability <> 'Not Available' AND d.verified=1
+               u.city, u.area, u.mobile, d.availability,
+               d.last_donation_date, d.verified
+        FROM donors d
+        JOIN users u ON u.id = d.user_id
+        WHERE u.blood_group IN (%s)
+          AND d.availability <> 'Not Available'
+          AND d.verified = 1
     ''' % ','.join(['%s'] * len(donors))
+
     params = donors
+
     if availability in AVAILABILITY:
-        sql += ' AND d.availability=%s'
+        sql += ' AND d.availability = %s'
         params = params + [availability]
-    sql += ''' ORDER BY CASE WHEN d.availability='Available' THEN 0 ELSE 1 END,
-                      CASE WHEN u.city=%s AND u.area=%s THEN 0
-                           WHEN u.city=%s THEN 1 ELSE 2 END,
-                      u.full_name'''
+
+    sql += ''' ORDER BY
+        CASE WHEN d.availability = 'Available' THEN 0 ELSE 1 END,
+        CASE WHEN u.city = %s AND u.area = %s THEN 0
+             WHEN u.city = %s THEN 1 ELSE 2 END,
+        u.full_name'''
+
     params = params + [city, area, city]
+
     return query(sql, tuple(params))
 
 
@@ -315,6 +326,94 @@ def find_blood():
                            (group, city, city))
     return render_template('public/find_blood.html', donors=donors, hospitals=hospitals,
                            selected_group=group, city=city, area=area, selected_availability=availability)
+
+@app.route('/request-donor/<int:donor_id>', methods=['POST'])
+@role_required('USER', 'DONOR', 'HOSPITAL', 'ADMIN')
+def request_donor(donor_id):
+    requester = current_user()
+
+    group = (request.form.get('blood_group') or '').strip()
+    city = (request.form.get('city') or '').strip()
+    area = (request.form.get('area') or '').strip()
+
+    return_url = url_for(
+        'find_blood',
+        blood_group=group,
+        city=city,
+        area=area
+    )
+
+    if group not in BLOOD_GROUPS:
+        flash('Please select a valid blood group.', 'danger')
+        return redirect(url_for('find_blood'))
+
+    donor = query(
+        '''SELECT d.id AS donor_id, d.user_id, d.availability,
+                  d.verified, u.full_name, u.blood_group
+           FROM donors d
+           JOIN users u ON u.id = d.user_id
+           WHERE d.id = %s''',
+        (donor_id,),
+        one=True
+    )
+
+    if not donor or not donor['verified']:
+        flash('This donor is not available for requests.', 'warning')
+        return redirect(return_url)
+
+    if donor['availability'] == 'Not Available':
+        flash('This donor is currently unavailable.', 'warning')
+        return redirect(return_url)
+
+    compatible_groups = COMPATIBLE_DONORS.get(group, [group])
+
+    if donor['blood_group'] not in compatible_groups:
+        flash('This donor does not match the requested blood group.', 'danger')
+        return redirect(return_url)
+
+    if donor['user_id'] == requester['id']:
+        flash('You cannot send a blood request to yourself.', 'warning')
+        return redirect(return_url)
+
+    requester_info = query(
+        '''SELECT full_name, email, mobile
+           FROM users
+           WHERE id = %s''',
+        (requester['id'],),
+        one=True
+    )
+
+    if not requester_info:
+        flash('Could not retrieve your account details.', 'danger')
+        return redirect(return_url)
+
+    requester_name = requester_info['full_name']
+    contact_details = (
+        f"Phone: {requester_info.get('mobile') or 'Not provided'}; "
+        f"Email: {requester_info.get('email') or 'Not provided'}"
+    )
+
+    message = (
+        f"You received a blood request from {requester_name}. "
+        f"Requester contact: {contact_details}. "
+        f"Blood group requested: {group}. "
+        f"Required location: {city or 'Not specified'}, "
+        f"{area or 'Area not specified'}. "
+        f"Please contact the requester to discuss the blood donation."
+    )
+
+    add_notification(
+        donor['user_id'],
+        'You Received a Blood Request',
+        message
+    )
+
+    flash(
+        f'Your blood request notification was sent to {donor["full_name"]}.',
+        'success'
+    )
+    return redirect(return_url)
+
 
 
 @app.route('/hospitals')
